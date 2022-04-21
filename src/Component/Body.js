@@ -1,9 +1,70 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./Body.scss"
-import { Button, Form } from "react-bootstrap";
+import { Button } from "react-bootstrap";
+import {observer} from "mobx-react"
+import { Appstate } from "../App";
+import {Card} from "react-bootstrap"
+import {runInAction} from "mobx"
+import axios from "axios"
+import { useNavigate } from "react-router-dom";
 
 
-const Body = () => {
+
+
+const Body =({store}) => {
+    const navigate=useNavigate();
+     console.log(store,"store")
+     const [del,setDel]=useState(false)
+    const fetched = async() => {
+          
+               await axios 
+               .get("http://localhost:3006/products")
+               .then(res=>{
+                   console.log("rr",res) 
+let uniqueChars = [...new Set(res.data)];
+                runInAction(()=>(store.products.push(uniqueChars)))
+
+                console.log("hais",store.products)
+            })
+       
+               .catch((err)=>{
+                     console.log("err",err)
+                   });     
+           }
+
+           useEffect(()=>{
+               fetched()
+               console.log("hai",store.getresult())
+           },[])
+           
+           const handleSubmit=()=>{
+               navigate("/Add")
+           }
+
+           const handleDelete=(products)=>{
+            const deleteproducts = async() => {
+          
+                await axios 
+                .delete(`http://localhost:3006/products/${products}`)
+                .then(res=>{
+                    console.log("rr",res) 
+                // //  runInAction(()=>(store.products=res.data))
+                  setDel(true)
+                 console.log("hais",store.products)
+             })
+        
+                .catch((err)=>{
+                      console.log("err",err)
+                    });     
+            }
+            deleteproducts()
+           }
+      
+
+          
+
+           
+        
     return (
         <>
             <div className="container-fluid">
@@ -61,14 +122,42 @@ const Body = () => {
                 <input className="input" type="text" placeholder="what is NetFlix?" ></input>
                 <input className="input" type="text" placeholder="what is NetFlix?" ></input>
                 <p className="ready"style={{color:"white"}}>Ready to watch? Enter your email to create or restart your membership</p>
-                <div className="">
+                <div className="whole" style={{alignContent:"center"}}>
                 <input style={{widht:"10rem", height:"50px"}} type="text" placeholder="Email address"></input>
                 <Button style={{widht:"100px",height:"50px"}} className="btn-danger">Get Started</Button>
                 </div>
-            </div>
-           
-       
-        </>
+                </div>
+            
+                
+            { store.products.map((productdata,index)=>{
+                return productdata.map((product)=>
+                {return(
+                    <>
+                   
+                    <Card 
+                      style={{ width: "18rem", display:"inline-block", borderRadius:"10px"}}>
+                      <Card.Img 
+                       src={product.url}>
+                      </Card.Img>
+                      <Card.Body >
+                      <div> {product.id}</div> 
+                      <div> {product.Name}</div>
+                      <div> {product.Releasedate}</div> 
+                      
+                      </Card.Body>
+                      <Button onClick={handleSubmit}>Add</Button>
+                      <Button className="btn-danger" onClick={()=>handleDelete(product.id)}>Deleted</Button>
+                  
+                  </Card>
+                 </>
+                 )})})}
+                
+
+                
+                 
+
+
+ </> 
     )
 }
-export default Body
+export default observer (Body);

@@ -27,8 +27,9 @@
 
 .containern{
     width: 100vw;
-    height: 800px;
+    height: 35rem;
     background-color: black;
+    align-content: center;
 }
 
 .containern h1{
@@ -54,5 +55,8 @@
     font-size: 25px;
     text-align: center;
     padding-top: 20px;
+}
+.containern.whole{
+    display: flex;
 }
 

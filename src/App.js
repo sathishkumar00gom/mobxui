@@ -1,15 +1,28 @@
-
 import './App.css';
-import Navbartop from "./Component/Navbar"
-import Home from './Component/Home';
-import Body from './Component/Body';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Add from './Component/add';
+import {observable} from "mobx"
+import Routern from "./Component/Router"
+
+
+export const Appstate=observable(
+  {
+     products:[],
+     getresult(){
+       return Appstate.products   
+     }}
+     )
 
 function App() {
   return (
     <>
-  <Navbartop/>
-  <Home/>
-  <Body/>
+ 
+  <Router>
+    <Routes>
+    <Route path="/" element={<Routern/>}/>
+      <Route path="/Add" element={<Add/>}/>
+    </Routes>
+  </Router>
   </>
 
     )
